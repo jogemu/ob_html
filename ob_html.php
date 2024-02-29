@@ -1,4 +1,4 @@
-<?php error_reporting(E_ALL);
+<?php
 
 // returns unset value of array or fallback
 function ob_unset($key, &$array, $fallback=null) {
@@ -157,6 +157,7 @@ function form($inner, ...$attr) { tag('form', $inner, ...$attr); }
 function h($level, $inner, ...$attr) {
   tag('h'.$level, $inner, ...$attr);
 }
+// head is part of ob_html
 function intro($inner, ...$attr) { tag('header', $inner, ...$attr); }
 function hgroup($level, $inner, $after=[], $before=[], ...$attr) {
   tag('hgroup', [
@@ -199,6 +200,7 @@ function label($label, $inner='', ...$attr) {
 // legend is part of fieldset
 // li is part of menu, ol and ul
 // link is part of ob_html
+function main($inner, ...$attr) { tag('main', $inner, ...$attr); }
 function map($name, $areas=[], ...$attr) {
   $attr['name'] = $name;
   tag('map', tags('area', $areas, 'shape'), ...$attr);
