@@ -31,7 +31,7 @@ div(function() {
 });
 ```
 
-The values of form inputs are passed by reference so that user input can be automatically applied. For this to happen, the `input()`, `select()`, `textarea()` or `button()` must have a `name` and be in a `<form method="post">`. Inputs that are `readonly` or `disabled` do not overwrite their variables. The optional parameter `ob_action` may provide a function which can cancel or modify immediately before overwriting.
+The values of form inputs are passed by reference so that user input can be automatically applied. For this to happen, the `input()`, `select()`, `textarea()` or `button()` must have a `name` and be in a `<form method="post">`. Inputs that are `readonly` or `disabled` do not overwrite their variables. The optional parameter `ob_action` may provide a function that is called on form submission.
 
 ```php
 <?php require('ob_html.php');
@@ -45,7 +45,8 @@ form(function() use ($user) {
   // echo '<label><textarea name="name">John Doe</textarea><span>Name</span></label>';
   input('Age', $user->age, type: 'number', name: 'age');
   // echo '<label><input type="number" name="age" value="0"/><span>Age</span></label>';
-  button('Submit', name: 'submit', type:'submit', ob_action: fn() => $user->save());
+  button('Submit', type:'submit', name: 'submit', ob_action: fn() => $user->save());
+  // echo '<button type="submit" name="submit">Submit</button>';
 }, method: 'post');
 ```
 
