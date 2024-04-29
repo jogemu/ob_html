@@ -1,4 +1,4 @@
-<?php
+<?php // https://github.com/jogemu/ob_html/
 
 // returns unset value of array or fallback
 function ob_unset($key, &$array, $fallback=null) {
@@ -45,7 +45,7 @@ function tag($tag, $inner='', ...$attr) {
     if(is_bool($v)) echo $v ? ' '.$k : '';
     else echo ' '.$k.'="'.$v.'"';
   }
-  if($inner=='') echo '/>';
+  if(in_array($tag, ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'])) echo '/>'; // option, iframe, meter, progress
   else echo '>'.ob_call($inner).'</'.$tag.'>';
 }
 
@@ -115,7 +115,7 @@ function data($inner, $value, ...$attr) {
   tag('data', $inner, ...$attr);
 }
 function datalist($options, ...$attr) {
-  tag('datalist', tags('option', $options, 'value', inner:' '), ...$attr);
+  tag('datalist', tags('option', $options, 'value'), ...$attr);
 }
 // dd is part of dl
 function del($inner, ...$attr) { tag('del', $inner, ...$attr); }
@@ -171,7 +171,7 @@ function hr(...$attr) { tag('hr', ...$attr); }
 function i($inner, ...$attr) { tag('i', $inner, ...$attr); }
 function iframe($src, ...$attr) {
   $attr['src'] = $src;
-  tag('iframe', ' ', ...$attr);
+  tag('iframe', ...$attr);
 }
 function img($src, $alt, ...$attr) {
   $attr['src'] = $src;
@@ -212,7 +212,7 @@ function menu($items, ...$attr) {
 // meta is part of ob_html
 function meter($label, $value, ...$attr) {
   $attr['value'] = $value;
-  label($label, fn() => tag('meter', ' ', ...$attr));
+  label($label, fn() => tag('meter', ...$attr));
 }
 function nav($inner, ...$attr) { tag('nav', $inner, ...$attr); }
 function noscript($inner, ...$attr) { tag('noscript', $inner, ...$attr); }
@@ -233,7 +233,7 @@ function picture($sources, $img, ...$attr) {
 function pre($inner, ...$attr) { tag('pre', $inner, ...$attr); }
 function progress($label, $value, ...$attr) {
   $attr['value'] = $value;
-  label($label, fn() => tag('progress', ' ', ...$attr));
+  label($label, fn() => tag('progress', ...$attr));
 }
 function q($inner, ...$attr) { tag('q', $inner, ...$attr); }
 // rp is part of ruby
@@ -303,7 +303,7 @@ function textarea($label, &$value='', $ob_action=null, ...$attr) {
   ob_action($ob_action, $attr, $value);
   $v = str_replace('&', '&amp;', $value);
   $v = str_replace('<', '&lt;', $v);
-  $v = str_replace('>', '&rt;', $v);
+  $v = str_replace('>', '&gt;', $v);
   label($label, fn() => tag('textarea', $v, ...$attr));
 }
 // tfoot is part of table
