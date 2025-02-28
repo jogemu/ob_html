@@ -1,4 +1,4 @@
-<?php // https://github.com/jogemu/ob_html/
+<?php // https://github.com/jogemu/ob_html
 
 function ob_array($v) { return is_array($v) ? $v : [$v]; }
 
@@ -216,7 +216,7 @@ function label(...$a) {
   $label = array_shift($a);
   if(is_array($label)) {
     // copy named attributes of $label to $a
-    array_walk($label, fn($v, $k) => is_int($k) ? null : $a[$k] = $v);
+    foreach($label as $k=>$v) is_int($k) ?: $a[$k] = $v;
     // exclude named attributes
     $label = array_filter($label, 'is_int', ARRAY_FILTER_USE_KEY);
     // first entry if just one entry
