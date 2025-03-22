@@ -1,5 +1,5 @@
 # ob_html.php
-Seamlessly generate HTML with PHP functions. Use named arguments to set attributes, neatly nest tags and allow HTML forms to update PHP variables.
+Seamlessly generate HTML with PHP functions. Use named arguments to set attributes, neatly nest tags and allow HTML forms to update PHP variables. Designed to be compact and easy to understand, even in deeply nested scopes. The native control structures of PHP allow maximum flexibility while keeping the barrier to entry low.
 
 ## Quick start
 Echo shows the expected output of the previous call.
@@ -53,7 +53,7 @@ form(
   // echo '<label><textarea name="name">John Doe</textarea><span>Name</span></label>';
   input('Age', value: $user->age, type: 'number', name: 'age'),
   // echo '<label><input type="number" name="age" value="0"/><span>Age</span></label>';
-  button('Submit', type:'submit', name: 'submit', ob_action: fn() => $user->save()),
+  button('Submit', type:'submit', name: 'submit', ob_action: $user->save),
   // echo '<button type="submit" name="submit">Submit</button>';
   method: 'post'
 );
