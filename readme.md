@@ -1,7 +1,9 @@
 # ob_html.php
-Seamlessly generate HTML with PHP functions. Use named arguments to set attributes, neatly nest tags and allow HTML forms to update PHP variables.
+
+Seamlessly generate HTML with PHP functions. Use named arguments to set attributes, neatly nest tags and allow HTML forms to update PHP variables. Designed to be compact and easy to understand, even in deeply nested scopes. The native control structures of PHP allow maximum flexibility while keeping the barrier to entry low.
 
 ## Quick start
+
 Echo shows the expected output of the previous call.
 
 ```php
@@ -53,7 +55,7 @@ form(
   // echo '<label><textarea name="name">John Doe</textarea><span>Name</span></label>';
   input('Age', value: $user->age, type: 'number', name: 'age'),
   // echo '<label><input type="number" name="age" value="0"/><span>Age</span></label>';
-  button('Submit', type:'submit', name: 'submit', ob_action: fn() => $user->save()),
+  button('Submit', type:'submit', name: 'submit', ob_action: $user->save),
   // echo '<button type="submit" name="submit">Submit</button>';
   method: 'post'
 );
@@ -88,9 +90,11 @@ p('I am a child of tag body.');
 ```
 
 ## Functions
+
 A list of supported functions should not be necessary by design. Assuming familiarity with [HTML elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element), simply use the functions of the respective name.
 
 ### Intentionally excluded
+
 * Essentials and metadata (generated via return or `html()`)
   * `<!DOCTYPE html>`, `<head>`, `<body>`
   * `<title>`, `<meta>`, `<link>`, `<base>`
@@ -107,6 +111,7 @@ A list of supported functions should not be necessary by design. Assuming famili
 * Obsolete and deprecated elements
 
 ### Special array interpretations
+
 In this compact list, the meaning of a string depends on the quotation marks used. The current content of a string is the placeholder and represents a place where content can be placed. For single quotes (`'`) the placeholder is the tag of the element that contains the content. With double quotes (`"`) the tag must be inferred from the context and has an attribute with the placeholder as the name and the content as the value.
 
 * `ul(['li', ...])`, `ol(['li', ...])`, `menu(['li', ...])`
@@ -117,4 +122,5 @@ In this compact list, the meaning of a string depends on the quotation marks use
 * `ruby([[''=>'rt'], ...], 'rp', 'rp')`
 
 ### Limitations
+
 The definition of so many functions, some with short names, is likely to cause conflicts. The advantages of simple coding hopefully outweigh the disadvantages. Although some type of injection is prevented, in many places injection prevention would be too restrictive. Therefore, this should happen on a level that is built on top of these functions. The same also applies to validation. In particular, the detection of missing values requires additional logic.
