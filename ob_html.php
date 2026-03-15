@@ -35,7 +35,6 @@ function ob_call(&$a) {
 }
 
 function tag(...$a) {
-  if(function_exists('tag_')) tag_($a);
   ob_call($a);
 
   ob_start();
@@ -54,24 +53,24 @@ function tag(...$a) {
   else echo '>'.join('', array_filter($a, 'is_int', ARRAY_FILTER_USE_KEY)).'</'.$tag.'>';
 
   $r = ob_get_clean();
+  $used = false;
 
-  ob_start(fn($v) => $r.$v);
-  return function() use ($r) {
-    ob_end_clean();
+  ob_start(function($v) use ($r, &$used) { return ($used ? '' : $r) . $v; });
+  return function() use ($r, &$used) {
     echo $r;
+    $used = true;
   };
 }
 
 function tags($tag, $array, ...$a) {
   if(!is_array($array)) return $array;
-  ob_call($array);
   if(is_string($a['key'] ?? null)) {
     $a[$a['key']] = fn($v) => $v;
     unset($a['key']);
   }
   if(!$a) $a[] = fn($v) => $v;
   $a = fn($i) => array_map(fn($v) => !is_string($v) && is_callable($v) ? $v($i) : $v, $a);
-  return fn() => array_walk($array, fn($v) => tag($tag, ...$a($v))());
+  return fn() => array_walk($array, fn($v) => tag($tag, ...$a($v)));
 }
 
 function a(...$a) { return tag('a', ...$a); }
@@ -118,11 +117,10 @@ function dialog(...$a) { return tag('dialog', ...$a); }
 function div(...$a) { return tag('div', ...$a); }
 function dl(...$a) {
   $items = array_shift($a);
-  ob_call($items);
   return tag('dl', is_array($items) ? function() use ($items) {
     foreach($items as $dt=>$dd) {
-      tag('dt', $dt, ...ob_unset($dd, 'dt', []))();
-      tags('dd', ...ob_array($dd))();
+      tag('dt', $dt, ...ob_unset($dd, 'dt', []));
+      tags('dd', ob_array($dd))();
     }
   } : $items, ...$a);
 }
@@ -161,8 +159,8 @@ function html(...$a) {
   $lang = ob_unset($a, 'lang');
   $head = ob_array(ob_unset($a, 'head', []));
   return tag('html', tag('head', function() use ($a) {
-    tag('meta', charset: ob_unset($a, 'charset', 'utf-8'))();
-    if(isset($a['title'])) tag('title', ob_unset($a, 'title'))();
+    tag('meta', charset: ob_unset($a, 'charset', 'utf-8'));
+    if(isset($a['title'])) tag('title', ob_unset($a, 'title'));
 
     $base = ob_unset($a, 'base');
     if(is_string($base)) $base = ['href'=>$base];
@@ -185,9 +183,9 @@ function html(...$a) {
     $a['viewport'] ??= 'width=device-width,initial-scale=1';
 
     foreach(array_filter($a, fn($k) => !is_int($k), ARRAY_FILTER_USE_KEY) as $name=>$content) tag('meta', name: $name, content: $content)();
-    if(!is_null($base)) tag('base', ...$base)();
-    foreach($links as $link) tag('link', ...$link)();
-    foreach($scripts as $script) tag('script', ...$script)();
+    if(!is_null($base)) tag('base', ...$base);
+    foreach($links as $link) tag('link', ...$link);
+    foreach($scripts as $script) tag('script', ...$script);
   }, ...$head), tag('body', ...array_filter($a, 'is_int', ARRAY_FILTER_USE_KEY)), lang: $lang);
 }
 function i(...$a) { return tag('i', ...$a); }
@@ -268,14 +266,13 @@ function q(...$a) { return tag('q', ...$a); }
 // rp is part of ruby
 // rt is part of ruby
 function ruby($inner, $before='(', $after=')', ...$a) {
-  ob_call($inner);
   return tag('ruby', is_array($inner) ? function() use ($inner, $before, $after) {
     foreach($inner as $i) {
       if(!is_array($i)) $i = [$i];
-      echo $i[0] ?? '';
-      tag('rp', $before)();
-      tag('rt', $i[1] ?? '')();
-      tag('rp', $after)();
+      echo htmlentities($i[0] ?? '');
+      tag('rp', $before);
+      tag('rt', $i[1] ?? '');
+      tag('rp', $after);
     }
   } : $inner, ...$a);
 }
@@ -303,7 +300,6 @@ function sub(...$a) { return tag('sub', ...$a); }
 // summary is part of details
 function sup(...$a) { return tag('sup', ...$a); }
 function table(...$a) {
-  ob_call($a);
   $tbody = array_shift($a);
   $cols = ob_unset($a, 'cols', []);
   $thead = ob_unset($a, 'thead', []);
@@ -329,9 +325,9 @@ function table(...$a) {
   array_unshift(
     $a,
     $tags($cols, 'colgroup', 'col', key: 'span'),
-    $tags($thead, 'thead', 'tr', fn($l) => fn() => tags('td', $l)()),
-    $tags($tbody, 'tbody', 'tr', fn($l) => fn() => tags('td', $l)()),
-    $tags($tfoot, 'tfoot', 'tr', fn($l) => fn() => tags('td', $l)())
+    $tags($thead, 'thead', 'tr', fn($l) => tags('td', $l)),
+    $tags($tbody, 'tbody', 'tr', fn($l) => tags('td', $l)),
+    $tags($tfoot, 'tfoot', 'tr', fn($l) => tags('td', $l))
   );
 
   ob_unshift($a, 'caption');
