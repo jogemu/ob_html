@@ -46,6 +46,7 @@ function tag(...$a) {
     if(is_null($v)) continue;
     if(is_array($v)) $v = join(' ', $v);
     if(is_string($v)) $v = htmlentities($v);
+    $k = htmlentities(preg_replace_callback('/[\x{ff01}-\x{ff5e}]/u', fn($c) => mb_chr(mb_ord($c[0])  - 65248), $k));
     if(is_bool($v)) echo $v ? ' '.$k : '';
     else echo ' '.$k.'="'.$v.'"';
   }
