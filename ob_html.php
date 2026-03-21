@@ -363,6 +363,18 @@ function video(...$a) {
 }
 function wbr(...$a) { return tag('wbr', ...$a); }
 
+function svg(...$a) { return tag('svg', ...$a); }
+function g(...$a) { return tag('g', ...$a); }
+function circle(...$a) { return tag('circle', ...$a); }
+function ellipse(...$a) { return tag('ellipse', ...$a); }
+function line(...$a) { return tag('line', ...$a); }
+function path(...$a) { return tag('path', ...$a); }
+function polygon(...$a) { return tag('polygon', ...$a); }
+function polyline(...$a) { return tag('polyline', ...$a); }
+function rect(...$a) { return tag('rect', ...$a); }
+function text(...$a) { return tag('text', ...$a); }
+function foreignObject(...$a) { return tag('foreignObject', ...$a); }
+
 return function(...$a) {
   ob_start();
   echo '<!DOCTYPE html>';
