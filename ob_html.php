@@ -16,6 +16,7 @@ function ob_unshift(&$a, $tag, $key=null) {
 
 function ob_action(&$a) {
   $f = ob_unset($a, 'ob_action');
+  if(($a['readonly']??false) || ($a['disabled']??false)) return;
   $v = isset($a['name']) ? $_POST[$a['name']] ?? $_GET[$a['name']] ?? null : null;
   if(!isset($v)) return;
   if(!is_string($f) && is_callable($f)) $f($v, $a);
